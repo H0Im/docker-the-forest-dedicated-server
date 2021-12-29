@@ -7,7 +7,7 @@ This includes a TheForest Dedicated Server based on Docker with Wine and an exam
 ## Getting started
 WARNING: If you dont do Step 1 and 2 your server can/will not save!
 1. Create a new game server account over at https://steamcommunity.com/dev/managegameservers (Use AppID: `242760`)
-2. Insert the Login Token in the config (At `serverSteamAccount`)
+2. Insert the Login Token in the config.cfg file (At `serverSteamAccount`)
 3. Create 2 directories on your Dockernode (`/srv/tfds/steamcmd` and `/srv/tfds/game`)
 4. Start the container with the following examples:
 
@@ -24,17 +24,29 @@ services:
   the-forest-dedicated-server:
     container_name: the-forest-dedicated-server
     image: jammsen/the-forest-dedicated-server:latest
-    restart: always
+    restart: unless-stopped
     ports:
-      - 8766:8766/tcp
-      - 8766:8766/udp
-      - 27015:27015/tcp
-      - 27015:27015/udp
-      - 27016:27016/tcp
-      - 27016:27016/udp
+        - 8766:8766/tcp
+        - 8766:8766/udp
+        - 27015:27015/tcp
+        - 27015:27015/udp
+        - 27016:27016/tcp
+        - 27016:27016/udp
     volumes:
-      - /srv/tfds/steamcmd:/steamcmd
-      - /srv/tfds/game:/theforest
+        - /srv/tfds/steamcmd:/steamcmd
+        - /srv/tfds/game:/theforest
+        
+#Recommend to add a static IP to the docker container
+#Below is an example for the 172 range    
+    networks:
+        forest_ip:
+            ipv4_address: 172.26.0.2
+networks:
+  forest_ip:
+    ipam:
+      driver: default
+      config:
+          - subnet: 172.26.0.0/16
 ```
 
 ## Planned features in the future
